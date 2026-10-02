@@ -1,7 +1,19 @@
-.gradle
+# Gradle
+.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
-.agents
-.vscode
-scratch/
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
 bin/
+out/
+
+# Minecraft run directory & logs
+run/
+*.log
+
+# Project scratch & tooling
+scratch/
+.agents/
