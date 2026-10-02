@@ -1,0 +1,10 @@
+{
+  "item.arcanetablet.arcane_tablet": "Arcane Tablet",
+  "itemGroup.arcanetablet.arcanetablet_group": "Arcane Tablet",
+  "subtitles.arcanetablet.tablet_open": "Arcane Tablet hums",
+  "subtitles.arcanetablet.tablet_execute": "Command Matrix engages",
+  "subtitles.arcanetablet.tablet_warp": "Spatial displacement occurs",
+  "subtitles.arcanetablet.tablet_scan": "Seismic sonar pulses",
+  "subtitles.arcanetablet.tablet_denied": "Command authorization failed",
+  "subtitles.arcanetablet.tablet_bank": "Energy transfer chimed"
+}

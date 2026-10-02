@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GAG",
+    "RCR",
+    "GOG"
+  ],
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "A": "minecraft:amethyst_shard",
+    "R": "minecraft:redstone",
+    "C": "minecraft:compass",
+    "O": "minecraft:obsidian"
+  },
+  "result": {
+    "count": 1,
+    "id": "arcanetablet:arcane_tablet"
+  }
+}
