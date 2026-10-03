@@ -1,12 +1,19 @@
-# ⚡ Arcane Tablet (Quantum Command Matrix)
+# ⚡ Arcane Tablet (Quantum Command Matrix) — Fabric Edition
 
 [![Minecraft 1.21.4 / 1.21.11](https://img.shields.io/badge/Minecraft-1.21.4%20%2F%201.21.11-brightgreen.svg)](https://fabricmc.net/)
 [![Fabric Loader](https://img.shields.io/badge/Fabric%20Loader-0.16%2B-blue.svg)](https://fabricmc.net/)
+[![Java 21](https://img.shields.io/badge/Java-21-orange.svg)](https://adoptium.net/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A standalone Fabric utility & magic mod for **Minecraft 1.21.4 / 1.21.11+**.
+A standalone **Fabric** utility & magic mod for **Minecraft 1.21.4 / 1.21.11+**.
 
 The **Arcane Tablet** enables pure survival players to execute balanced, lore-friendly world manipulation rites **without enabling cheats or operator permissions**. Every command is strictly gated by **Experience Levels (XP)** and unlocked through **Vanilla Advancement Progression**.
+
+---
+
+## 🌐 Other Loader Versions
+- **Forge Edition (1.21.4 / 1.21.11):** Available on branch [`forge-1.21.4`](https://github.com/shufunk-dev/arcanetablet/tree/forge-1.21.4)
+- **NeoForge Edition (1.21.4 / 1.21.11):** Available on branch [`neoforge-1.21.4`](https://github.com/shufunk-dev/arcanetablet/tree/neoforge-1.21.4)
 
 ---
 
@@ -84,11 +91,11 @@ Crafted at a standard Crafting Table:
 
 ---
 
-## 📥 Installation
+## 📥 Installation (Fabric)
 
-1. Install **Fabric Loader** (0.16.0 or newer) for Minecraft 1.21.4 / 1.21.11.
-2. Download and place **Fabric API** into your `.minecraft/mods` folder.
-3. Download **Arcane Tablet** (`arcanetablet-1.0.0.jar`) and place it in `.minecraft/mods`.
+1. Install **Fabric Loader** (0.16.0 or newer) for **Minecraft 1.21.4 / 1.21.11**.
+2. Download and place **[Fabric API](https://curseforge.com/minecraft/mc-mods/fabric-api)** into your `.minecraft/mods` folder.
+3. Download **Arcane Tablet (Fabric)** (`arcanetablet-fabric-1.21.11-1.0.0.jar`) and place it in `.minecraft/mods`.
 4. Launch the game, craft your tablet, and right-click to open the matrix!
 
 ---
