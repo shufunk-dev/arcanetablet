@@ -16,7 +16,7 @@ public class ModItems {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ArcaneTabletMod.MOD_ID);
 
     public static final RegistryObject<Item> ARCANE_TABLET = ITEMS.register("arcane_tablet",
-            () -> new ArcaneTabletItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+            () -> new ArcaneTabletItem(new Item.Properties().setId(ITEMS.key("arcane_tablet")).stacksTo(1).rarity(Rarity.RARE)));
 
     public static final RegistryObject<CreativeModeTab> ARCANE_TABLET_TAB = CREATIVE_MODE_TABS.register("arcanetablet_tab",
             () -> CreativeModeTab.builder()
