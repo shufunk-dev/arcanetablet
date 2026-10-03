@@ -2,8 +2,8 @@ package net.arcanetablet.client;
 
 import net.arcanetablet.client.gui.ArcaneTabletScreen;
 import net.arcanetablet.network.ModMessages;
-import net.arcanetablet.network.ModMessages.RequestSyncPacket;
-import net.arcanetablet.network.ModMessages.SyncPlayerDataPacket;
+import net.arcanetablet.network.ModMessages.RequestSyncPayload;
+import net.arcanetablet.network.ModMessages.SyncPlayerDataPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -29,11 +29,11 @@ public class ArcaneTabletClient {
     public static int STATUS_CODE = 0; // 0=Info, 1=Success, 2=Error
     public static long STATUS_TIME = 0;
 
-    public static void receiveSyncPacket(SyncPlayerDataPacket payload) {
+    public static void receiveSyncPacket(SyncPlayerDataPayload payload) {
         handleSyncPacket(payload);
     }
 
-    public static void handleSyncPacket(SyncPlayerDataPacket payload) {
+    public static void handleSyncPacket(SyncPlayerDataPayload payload) {
         Minecraft.getInstance().execute(() -> {
             UNLOCKED_ACTIONS.clear();
             UNLOCKED_ACTIONS.addAll(payload.unlockedActionIds());
@@ -68,7 +68,7 @@ public class ArcaneTabletClient {
         Minecraft client = Minecraft.getInstance();
         if (client.player != null) {
             // Request fresh telemetry from server
-            ModMessages.sendToServer(new RequestSyncPacket());
+            ModMessages.sendToServer(new RequestSyncPayload());
             client.setScreen(new ArcaneTabletScreen(Component.literal("Quantum Command Matrix"), stack));
         }
     }

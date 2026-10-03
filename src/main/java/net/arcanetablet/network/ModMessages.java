@@ -8,7 +8,6 @@ import net.arcanetablet.data.PlayerArcaneData;
 import net.arcanetablet.item.ArcaneTabletItem;
 import net.arcanetablet.item.ModItems;
 import net.arcanetablet.sound.ModSounds;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -19,6 +18,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -47,10 +48,10 @@ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,127 +59,142 @@ import java.util.List;
 import java.util.Optional;
 
 public class ModMessages {
-    public static final SimpleChannel CHANNEL = ChannelBuilder.named(Identifier.fromNamespaceAndPath(ArcaneTabletMod.MOD_ID, "main"))
-            .networkProtocolVersion(1)
-            .simpleChannel();
 
-    public static void registerPackets() {
-        int id = 0;
+    public static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
 
-        CHANNEL.messageBuilder(BankActionPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(BankActionPacket::encode)
-                .decoder(BankActionPacket::decode)
-                .consumerMainThread((msg, ctx) -> {
-                    ServerPlayer player = ctx.getSender();
-                    if (player != null) {
-                        handleBankAction(player, msg.actionType());
-                    }
-                    ctx.setPacketHandled(true);
-                })
-                .add();
+        registrar.playToServer(
+                BankActionPayload.TYPE,
+                BankActionPayload.STREAM_CODEC,
+                ModMessages::handleBankActionPayload
+        );
 
-        CHANNEL.messageBuilder(ExecuteActionPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(ExecuteActionPacket::encode)
-                .decoder(ExecuteActionPacket::decode)
-                .consumerMainThread((msg, ctx) -> {
-                    ServerPlayer player = ctx.getSender();
-                    if (player != null) {
-                        handleExecuteAction(player, msg.actionId(), msg.preferBankXp());
-                    }
-                    ctx.setPacketHandled(true);
-                })
-                .add();
+        registrar.playToServer(
+                ExecuteActionPayload.TYPE,
+                ExecuteActionPayload.STREAM_CODEC,
+                ModMessages::handleExecuteActionPayload
+        );
 
-        CHANNEL.messageBuilder(RequestSyncPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(RequestSyncPacket::encode)
-                .decoder(RequestSyncPacket::decode)
-                .consumerMainThread((msg, ctx) -> {
-                    ServerPlayer player = ctx.getSender();
-                    if (player != null && player.level() instanceof ServerLevel serverLevel) {
-                        ArcaneWorldData worldData = ArcaneWorldData.getServerState(serverLevel);
-                        PlayerArcaneData playerData = worldData.getOrCreatePlayerData(player.getUUID());
-                        ItemStack tablet = findTablet(player);
-                        sendSyncPacket(player, playerData, tablet, "Telemetry Synchronized", 0);
-                    }
-                    ctx.setPacketHandled(true);
-                })
-                .add();
+        registrar.playToServer(
+                RequestSyncPayload.TYPE,
+                RequestSyncPayload.STREAM_CODEC,
+                ModMessages::handleRequestSyncPayload
+        );
 
-        CHANNEL.messageBuilder(SyncPlayerDataPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(SyncPlayerDataPacket::encode)
-                .decoder(SyncPlayerDataPacket::decode)
-                .consumerMainThread((msg, ctx) -> {
-                    net.arcanetablet.client.ArcaneTabletClient.receiveSyncPacket(msg);
-                    ctx.setPacketHandled(true);
-                })
-                .add();
+        registrar.playToClient(
+                SyncPlayerDataPayload.TYPE,
+                SyncPlayerDataPayload.STREAM_CODEC,
+                ModMessages::handleSyncPlayerDataPayload
+        );
     }
 
-    public static void sendToServer(Object packet) {
-        CHANNEL.send(packet, PacketDistributor.SERVER.noArg());
+    public static void sendToServer(CustomPacketPayload payload) {
+        net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(payload);
     }
 
-    public static void sendToPlayer(ServerPlayer player, Object packet) {
-        CHANNEL.send(packet, PacketDistributor.PLAYER.with(player));
+    public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        PacketDistributor.sendToPlayer(player, payload);
     }
 
-    // Packet Records
-    public record BankActionPacket(int actionType) {
-        public static void encode(BankActionPacket msg, FriendlyByteBuf buf) {
-            buf.writeInt(msg.actionType);
+    // Payload Definitions
+    public record BankActionPayload(int actionType) implements CustomPacketPayload {
+        public static final Type<BankActionPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(ArcaneTabletMod.MOD_ID, "bank_action"));
+        public static final StreamCodec<FriendlyByteBuf, BankActionPayload> STREAM_CODEC = StreamCodec.ofMember(
+                BankActionPayload::encode,
+                BankActionPayload::decode
+        );
+
+        public void encode(FriendlyByteBuf buf) {
+            buf.writeInt(actionType);
         }
-        public static BankActionPacket decode(FriendlyByteBuf buf) {
-            return new BankActionPacket(buf.readInt());
+
+        public static BankActionPayload decode(FriendlyByteBuf buf) {
+            return new BankActionPayload(buf.readInt());
+        }
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
         }
     }
 
-    public record ExecuteActionPacket(String actionId, boolean preferBankXp) {
-        public static void encode(ExecuteActionPacket msg, FriendlyByteBuf buf) {
-            buf.writeUtf(msg.actionId);
-            buf.writeBoolean(msg.preferBankXp);
+    public record ExecuteActionPayload(String actionId, boolean preferBankXp) implements CustomPacketPayload {
+        public static final Type<ExecuteActionPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(ArcaneTabletMod.MOD_ID, "execute_action"));
+        public static final StreamCodec<FriendlyByteBuf, ExecuteActionPayload> STREAM_CODEC = StreamCodec.ofMember(
+                ExecuteActionPayload::encode,
+                ExecuteActionPayload::decode
+        );
+
+        public void encode(FriendlyByteBuf buf) {
+            buf.writeUtf(actionId);
+            buf.writeBoolean(preferBankXp);
         }
-        public static ExecuteActionPacket decode(FriendlyByteBuf buf) {
-            return new ExecuteActionPacket(buf.readUtf(), buf.readBoolean());
+
+        public static ExecuteActionPayload decode(FriendlyByteBuf buf) {
+            return new ExecuteActionPayload(buf.readUtf(), buf.readBoolean());
+        }
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
         }
     }
 
-    public record RequestSyncPacket() {
-        public static void encode(RequestSyncPacket msg, FriendlyByteBuf buf) {}
-        public static RequestSyncPacket decode(FriendlyByteBuf buf) {
-            return new RequestSyncPacket();
+    public record RequestSyncPayload() implements CustomPacketPayload {
+        public static final Type<RequestSyncPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(ArcaneTabletMod.MOD_ID, "request_sync"));
+        public static final StreamCodec<FriendlyByteBuf, RequestSyncPayload> STREAM_CODEC = StreamCodec.ofMember(
+                RequestSyncPayload::encode,
+                RequestSyncPayload::decode
+        );
+
+        public void encode(FriendlyByteBuf buf) {}
+
+        public static RequestSyncPayload decode(FriendlyByteBuf buf) {
+            return new RequestSyncPayload();
+        }
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
         }
     }
 
-    public record SyncPlayerDataPacket(
+    public record SyncPlayerDataPayload(
             List<String> unlockedActionIds,
             int deathX, int deathY, int deathZ, String deathDimension,
             String scannedStructure, int scanX, int scanY, int scanZ, int scanDistance,
             int bankLevels, long spiritTetherRemainingSec, long cooldownRemainingSec,
             boolean isOp, String statusMessage, int statusCode
-    ) {
-        public static void encode(SyncPlayerDataPacket msg, FriendlyByteBuf buf) {
-            buf.writeInt(msg.unlockedActionIds.size());
-            for (String id : msg.unlockedActionIds) {
+    ) implements CustomPacketPayload {
+        public static final Type<SyncPlayerDataPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(ArcaneTabletMod.MOD_ID, "sync_player_data"));
+        public static final StreamCodec<FriendlyByteBuf, SyncPlayerDataPayload> STREAM_CODEC = StreamCodec.ofMember(
+                SyncPlayerDataPayload::encode,
+                SyncPlayerDataPayload::decode
+        );
+
+        public void encode(FriendlyByteBuf buf) {
+            buf.writeInt(unlockedActionIds.size());
+            for (String id : unlockedActionIds) {
                 buf.writeUtf(id);
             }
-            buf.writeInt(msg.deathX);
-            buf.writeInt(msg.deathY);
-            buf.writeInt(msg.deathZ);
-            buf.writeUtf(msg.deathDimension);
-            buf.writeUtf(msg.scannedStructure);
-            buf.writeInt(msg.scanX);
-            buf.writeInt(msg.scanY);
-            buf.writeInt(msg.scanZ);
-            buf.writeInt(msg.scanDistance);
-            buf.writeInt(msg.bankLevels);
-            buf.writeLong(msg.spiritTetherRemainingSec);
-            buf.writeLong(msg.cooldownRemainingSec);
-            buf.writeBoolean(msg.isOp);
-            buf.writeUtf(msg.statusMessage);
-            buf.writeInt(msg.statusCode);
+            buf.writeInt(deathX);
+            buf.writeInt(deathY);
+            buf.writeInt(deathZ);
+            buf.writeUtf(deathDimension);
+            buf.writeUtf(scannedStructure);
+            buf.writeInt(scanX);
+            buf.writeInt(scanY);
+            buf.writeInt(scanZ);
+            buf.writeInt(scanDistance);
+            buf.writeInt(bankLevels);
+            buf.writeLong(spiritTetherRemainingSec);
+            buf.writeLong(cooldownRemainingSec);
+            buf.writeBoolean(isOp);
+            buf.writeUtf(statusMessage);
+            buf.writeInt(statusCode);
         }
 
-        public static SyncPlayerDataPacket decode(FriendlyByteBuf buf) {
+        public static SyncPlayerDataPayload decode(FriendlyByteBuf buf) {
             int count = buf.readInt();
             List<String> unlocked = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
@@ -200,8 +216,47 @@ public class ModMessages {
             String status = buf.readUtf();
             int code = buf.readInt();
 
-            return new SyncPlayerDataPacket(unlocked, dX, dY, dZ, dDim, sStruct, sX, sY, sZ, sDist, bank, tSec, cdSec, isOp, status, code);
+            return new SyncPlayerDataPayload(unlocked, dX, dY, dZ, dDim, sStruct, sX, sY, sZ, sDist, bank, tSec, cdSec, isOp, status, code);
         }
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    // Packet Handlers
+    private static void handleBankActionPayload(BankActionPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player() instanceof ServerPlayer player) {
+                handleBankAction(player, payload.actionType());
+            }
+        });
+    }
+
+    private static void handleExecuteActionPayload(ExecuteActionPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player() instanceof ServerPlayer player) {
+                handleExecuteAction(player, payload.actionId(), payload.preferBankXp());
+            }
+        });
+    }
+
+    private static void handleRequestSyncPayload(RequestSyncPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player() instanceof ServerPlayer player && player.level() instanceof ServerLevel serverLevel) {
+                ArcaneWorldData worldData = ArcaneWorldData.getServerState(serverLevel);
+                PlayerArcaneData playerData = worldData.getOrCreatePlayerData(player.getUUID());
+                ItemStack tablet = findTablet(player);
+                sendSyncPacket(player, playerData, tablet, "Telemetry Synchronized", 0);
+            }
+        });
+    }
+
+    private static void handleSyncPlayerDataPayload(SyncPlayerDataPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            net.arcanetablet.client.ArcaneTabletClient.receiveSyncPacket(payload);
+        });
     }
 
     // Server Action Handlers
@@ -671,7 +726,7 @@ public class ModMessages {
         long cdSec = data.getRemainingCooldownSeconds();
         boolean isOp = player.level().getServer() != null && player.level().getServer().getPlayerList().isOp(new net.minecraft.server.players.NameAndId(player.getGameProfile()));
 
-        SyncPlayerDataPacket payload = new SyncPlayerDataPacket(
+        SyncPlayerDataPayload payload = new SyncPlayerDataPayload(
                 unlocks,
                 dPos.getX(), dPos.getY(), dPos.getZ(), dDim,
                 sStruct, sPos.getX(), sPos.getY(), sPos.getZ(), sDist,

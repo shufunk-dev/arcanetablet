@@ -4,8 +4,8 @@ import net.arcanetablet.client.ArcaneTabletClient;
 import net.arcanetablet.data.ArcaneAction;
 import net.arcanetablet.data.ArcaneCategory;
 import net.arcanetablet.network.ModMessages;
-import net.arcanetablet.network.ModMessages.BankActionPacket;
-import net.arcanetablet.network.ModMessages.ExecuteActionPacket;
+import net.arcanetablet.network.ModMessages.BankActionPayload;
+import net.arcanetablet.network.ModMessages.ExecuteActionPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -149,7 +149,7 @@ public class ArcaneTabletScreen extends Screen {
                             .withStyle(canExecute ? ChatFormatting.GREEN : (unlocked ? ChatFormatting.YELLOW : ChatFormatting.RED)),
                     button -> {
                         if (canExecute) {
-                            ModMessages.sendToServer(new ExecuteActionPacket(action.getId(), bankLvl >= cost));
+                            ModMessages.sendToServer(new ExecuteActionPayload(action.getId(), bankLvl >= cost));
                         }
                     }
             ).bounds(btnX, btnY, btnW, btnH).build();
@@ -186,7 +186,7 @@ public class ArcaneTabletScreen extends Screen {
     }
 
     private void sendBankAction(int type) {
-        ModMessages.sendToServer(new BankActionPacket(type));
+        ModMessages.sendToServer(new BankActionPayload(type));
     }
 
     private void drawHoloBorder(GuiGraphics context, int x, int y, int width, int height, int color) {
