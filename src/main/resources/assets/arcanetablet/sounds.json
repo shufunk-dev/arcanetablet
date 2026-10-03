@@ -1,37 +1,55 @@
 {
   "item.arcane_tablet.open": {
     "sounds": [
-      "minecraft:block/beacon/power_select"
+      {
+        "name": "block.beacon.power_select",
+        "type": "event"
+      }
     ],
     "subtitle": "subtitles.arcanetablet.tablet_open"
   },
   "item.arcane_tablet.execute": {
     "sounds": [
-      "minecraft:block/enchantment_table/use"
+      {
+        "name": "block.enchantment_table.use",
+        "type": "event"
+      }
     ],
     "subtitle": "subtitles.arcanetablet.tablet_execute"
   },
   "item.arcane_tablet.warp": {
     "sounds": [
-      "minecraft:entity/enderman/teleport"
+      {
+        "name": "entity.enderman.teleport",
+        "type": "event"
+      }
     ],
     "subtitle": "subtitles.arcanetablet.tablet_warp"
   },
   "item.arcane_tablet.scan": {
     "sounds": [
-      "minecraft:block/amethyst_block/resonate"
+      {
+        "name": "block.amethyst_block.resonate",
+        "type": "event"
+      }
     ],
     "subtitle": "subtitles.arcanetablet.tablet_scan"
   },
   "item.arcane_tablet.denied": {
     "sounds": [
-      "minecraft:block/dispenser/fail"
+      {
+        "name": "block.dispenser.fail",
+        "type": "event"
+      }
     ],
     "subtitle": "subtitles.arcanetablet.tablet_denied"
   },
   "item.arcane_tablet.bank": {
     "sounds": [
-      "minecraft:entity/experience_orb/pickup"
+      {
+        "name": "entity.experience_orb.pickup",
+        "type": "event"
+      }
     ],
     "subtitle": "subtitles.arcanetablet.tablet_bank"
   }
