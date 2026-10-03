@@ -1,11 +1,13 @@
 package net.arcanetablet.data;
 
-import net.minecraft.advancement.AdvancementEntry;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.Identifier;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 
 public enum ArcaneAction {
     // 1. Environmental Control (Weather & Time)
@@ -287,45 +289,45 @@ public enum ArcaneAction {
         return null;
     }
 
-    public boolean isUnlockedFor(ServerPlayerEntity player, PlayerArcaneData data) {
+    public boolean isUnlockedFor(ServerPlayer player, PlayerArcaneData data) {
         if (data != null && data.hasExplicitUnlock(this.id)) {
             return true;
         }
 
         // 1. Check vanilla Advancement
-        if (advancementId != null && !advancementId.isEmpty() && player.getEntityWorld() instanceof ServerWorld sw) {
-            AdvancementEntry entry = sw.getServer().getAdvancementLoader().get(Identifier.of(advancementId));
-            if (entry != null && player.getAdvancementTracker().getProgress(entry).isDone()) {
+        if (advancementId != null && !advancementId.isEmpty() && player.level() instanceof ServerLevel sw) {
+            AdvancementHolder entry = sw.getServer().getAdvancements().get(Identifier.parse(advancementId));
+            if (entry != null && player.getAdvancements().getOrStartProgress(entry).isDone()) {
                 return true;
             }
         }
 
         // 2. Fallback vanilla gameplay stat/inventory verification
         return switch (this) {
-            case CALL_THE_DAWN -> player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.SLEEP_IN_BED)) > 0 || player.getInventory().contains(Items.CLOCK.getDefaultStack());
-            case PART_THE_STORM -> player.getInventory().contains(Items.WHEAT_SEEDS.getDefaultStack()) || player.getInventory().contains(Items.WATER_BUCKET.getDefaultStack());
-            case GATHER_THE_GALE -> player.getInventory().contains(Items.LIGHTNING_ROD.getDefaultStack()) || player.getInventory().contains(Items.TRIDENT.getDefaultStack());
-            case LUNAR_HALT -> player.getStatHandler().getStat(Stats.KILLED.getOrCreateStat(net.minecraft.entity.EntityType.PHANTOM)) > 0 || player.getInventory().contains(Items.PHANTOM_MEMBRANE.getDefaultStack());
-            case BEACON_TETHER -> player.getInventory().contains(Items.LODESTONE.getDefaultStack()) || player.getInventory().contains(Items.COMPASS.getDefaultStack());
-            case SUBSPACE_GATEWAY -> player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.WALK_ONE_CM)) > 50000;
-            case LOCATE_VILLAGE -> player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.TALKED_TO_VILLAGER)) > 0 || player.getInventory().contains(Items.EMERALD.getDefaultStack());
-            case LOCATE_ANCIENT_CITY -> player.getInventory().contains(Items.ECHO_SHARD.getDefaultStack()) || player.getInventory().contains(Items.SCULK.getDefaultStack()) || player.getInventory().contains(Items.AMETHYST_SHARD.getDefaultStack());
-            case LOCATE_TRIAL_CHAMBERS -> player.getInventory().contains(Items.TRIAL_KEY.getDefaultStack()) || player.getInventory().contains(Items.COPPER_INGOT.getDefaultStack()) || player.getInventory().contains(Items.VAULT.getDefaultStack());
-            case LOCATE_FORTRESS -> player.getInventory().contains(Items.BLAZE_POWDER.getDefaultStack()) || player.getInventory().contains(Items.BLAZE_ROD.getDefaultStack()) || player.getInventory().contains(Items.NETHERRACK.getDefaultStack());
-            case LOCATE_STRONGHOLD -> player.getInventory().contains(Items.ENDER_EYE.getDefaultStack()) || player.getInventory().contains(Items.ENDER_PEARL.getDefaultStack());
-            case LOCATE_MINESHAFT -> player.getStatHandler().getStat(Stats.MINED.getOrCreateStat(net.minecraft.block.Blocks.STONE)) > 20 || player.getInventory().contains(Items.RAIL.getDefaultStack());
-            case LOCATE_MONUMENT -> player.getInventory().contains(Items.PRISMARINE_SHARD.getDefaultStack()) || player.getInventory().contains(Items.PRISMARINE.getDefaultStack()) || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.SWIM_ONE_CM)) > 10000;
-            case LOCATE_OUTPOST -> player.getInventory().contains(Items.CROSSBOW.getDefaultStack()) || player.getInventory().contains(Items.OMINOUS_BOTTLE.getDefaultStack()) || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.RAID_TRIGGER)) > 0;
-            case LOCATE_END_CITY -> player.getInventory().contains(Items.PURPUR_BLOCK.getDefaultStack()) || player.getInventory().contains(Items.CHORUS_FRUIT.getDefaultStack()) || player.getInventory().contains(Items.SHULKER_SHELL.getDefaultStack());
-            case WAYFARERS_SURVEY -> player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.WALK_ONE_CM)) > 10000 || player.getInventory().contains(Items.MAP.getDefaultStack()) || player.getInventory().contains(Items.FILLED_MAP.getDefaultStack());
-            case TURN_UNDEAD -> player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.MOB_KILLS)) > 0;
-            case WARDING_WARD -> player.getInventory().contains(Items.JUKEBOX.getDefaultStack()) || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_RECORD)) > 0;
-            case REPEL_INVADERS -> player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.RAID_WIN)) > 0 || player.getInventory().contains(Items.OMINOUS_BOTTLE.getDefaultStack());
-            case PURGE_THE_FALLEN -> player.getInventory().contains(Items.DRAGON_EGG.getDefaultStack()) || player.getInventory().contains(Items.DRAGON_BREATH.getDefaultStack());
-            case SPIRIT_TETHER -> player.getInventory().contains(Items.TOTEM_OF_UNDYING.getDefaultStack());
+            case CALL_THE_DAWN -> player.getStats().getValue(Stats.CUSTOM.get(Stats.SLEEP_IN_BED)) > 0 || player.getInventory().contains(Items.CLOCK.getDefaultInstance());
+            case PART_THE_STORM -> player.getInventory().contains(Items.WHEAT_SEEDS.getDefaultInstance()) || player.getInventory().contains(Items.WATER_BUCKET.getDefaultInstance());
+            case GATHER_THE_GALE -> player.getInventory().contains(Items.LIGHTNING_ROD.getDefaultInstance()) || player.getInventory().contains(Items.TRIDENT.getDefaultInstance());
+            case LUNAR_HALT -> player.getStats().getValue(Stats.ENTITY_KILLED.get(EntityType.PHANTOM)) > 0 || player.getInventory().contains(Items.PHANTOM_MEMBRANE.getDefaultInstance());
+            case BEACON_TETHER -> player.getInventory().contains(Items.LODESTONE.getDefaultInstance()) || player.getInventory().contains(Items.COMPASS.getDefaultInstance());
+            case SUBSPACE_GATEWAY -> player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > 50000;
+            case LOCATE_VILLAGE -> player.getStats().getValue(Stats.CUSTOM.get(Stats.TALKED_TO_VILLAGER)) > 0 || player.getInventory().contains(Items.EMERALD.getDefaultInstance());
+            case LOCATE_ANCIENT_CITY -> player.getInventory().contains(Items.ECHO_SHARD.getDefaultInstance()) || player.getInventory().contains(Items.SCULK.getDefaultInstance()) || player.getInventory().contains(Items.AMETHYST_SHARD.getDefaultInstance());
+            case LOCATE_TRIAL_CHAMBERS -> player.getInventory().contains(Items.TRIAL_KEY.getDefaultInstance()) || player.getInventory().contains(Items.COPPER_INGOT.getDefaultInstance()) || player.getInventory().contains(Items.VAULT.getDefaultInstance());
+            case LOCATE_FORTRESS -> player.getInventory().contains(Items.BLAZE_POWDER.getDefaultInstance()) || player.getInventory().contains(Items.BLAZE_ROD.getDefaultInstance()) || player.getInventory().contains(Items.NETHERRACK.getDefaultInstance());
+            case LOCATE_STRONGHOLD -> player.getInventory().contains(Items.ENDER_EYE.getDefaultInstance()) || player.getInventory().contains(Items.ENDER_PEARL.getDefaultInstance());
+            case LOCATE_MINESHAFT -> player.getStats().getValue(Stats.BLOCK_MINED.get(Blocks.STONE)) > 20 || player.getInventory().contains(Items.RAIL.getDefaultInstance());
+            case LOCATE_MONUMENT -> player.getInventory().contains(Items.PRISMARINE_SHARD.getDefaultInstance()) || player.getInventory().contains(Items.PRISMARINE.getDefaultInstance()) || player.getStats().getValue(Stats.CUSTOM.get(Stats.SWIM_ONE_CM)) > 10000;
+            case LOCATE_OUTPOST -> player.getInventory().contains(Items.CROSSBOW.getDefaultInstance()) || player.getInventory().contains(Items.OMINOUS_BOTTLE.getDefaultInstance()) || player.getStats().getValue(Stats.CUSTOM.get(Stats.RAID_TRIGGER)) > 0;
+            case LOCATE_END_CITY -> player.getInventory().contains(Items.PURPUR_BLOCK.getDefaultInstance()) || player.getInventory().contains(Items.CHORUS_FRUIT.getDefaultInstance()) || player.getInventory().contains(Items.SHULKER_SHELL.getDefaultInstance());
+            case WAYFARERS_SURVEY -> player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > 10000 || player.getInventory().contains(Items.MAP.getDefaultInstance()) || player.getInventory().contains(Items.FILLED_MAP.getDefaultInstance());
+            case TURN_UNDEAD -> player.getStats().getValue(Stats.CUSTOM.get(Stats.MOB_KILLS)) > 0;
+            case WARDING_WARD -> player.getInventory().contains(Items.JUKEBOX.getDefaultInstance()) || player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_RECORD)) > 0;
+            case REPEL_INVADERS -> player.getStats().getValue(Stats.CUSTOM.get(Stats.RAID_WIN)) > 0 || player.getInventory().contains(Items.OMINOUS_BOTTLE.getDefaultInstance());
+            case PURGE_THE_FALLEN -> player.getInventory().contains(Items.DRAGON_EGG.getDefaultInstance()) || player.getInventory().contains(Items.DRAGON_BREATH.getDefaultInstance());
+            case SPIRIT_TETHER -> player.getInventory().contains(Items.TOTEM_OF_UNDYING.getDefaultInstance());
             case GRAVE_COMPASS -> data != null && data.getLastDeathPos() != null;
-            case STASIS_SHELL -> player.getInventory().contains(Items.BEACON.getDefaultStack()) || player.getInventory().contains(Items.NETHER_STAR.getDefaultStack());
-            case RESTORE_ANVIL -> player.getInventory().contains(Items.IRON_INGOT.getDefaultStack()) || player.getInventory().contains(Items.ANVIL.getDefaultStack());
+            case STASIS_SHELL -> player.getInventory().contains(Items.BEACON.getDefaultInstance()) || player.getInventory().contains(Items.NETHER_STAR.getDefaultInstance());
+            case RESTORE_ANVIL -> player.getInventory().contains(Items.IRON_INGOT.getDefaultInstance()) || player.getInventory().contains(Items.ANVIL.getDefaultInstance());
         };
     }
 }

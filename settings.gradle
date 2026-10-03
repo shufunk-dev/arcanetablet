@@ -1,6 +1,10 @@
 pluginManagement {
     repositories {
         maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+        maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }

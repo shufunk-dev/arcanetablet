@@ -2,16 +2,16 @@ package net.arcanetablet.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.datafixer.DataFixTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.PersistentStateType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class ArcaneWorldData extends PersistentState {
+public class ArcaneWorldData extends SavedData {
     private static final String DATA_NAME = "arcane_tablet_world_data";
     private final Map<UUID, PlayerArcaneData> playerDataMap;
 
@@ -25,7 +25,7 @@ public class ArcaneWorldData extends PersistentState {
             ).apply(instance, ArcaneWorldData::new)
     );
 
-    public static final PersistentStateType<ArcaneWorldData> TYPE = new PersistentStateType<>(
+    public static final SavedDataType<ArcaneWorldData> TYPE = new SavedDataType<>(
             DATA_NAME,
             ArcaneWorldData::new,
             CODEC,
@@ -44,14 +44,14 @@ public class ArcaneWorldData extends PersistentState {
         return playerDataMap;
     }
 
-    public static ArcaneWorldData getServerState(ServerWorld world) {
-        ServerWorld overworld = world.getServer().getOverworld();
-        return overworld.getPersistentStateManager().getOrCreate(TYPE);
+    public static ArcaneWorldData getServerState(ServerLevel world) {
+        ServerLevel overworld = world.getServer().overworld();
+        return overworld.getDataStorage().computeIfAbsent(TYPE);
     }
 
     public PlayerArcaneData getOrCreatePlayerData(UUID uuid) {
         return playerDataMap.computeIfAbsent(uuid, id -> {
-            markDirty();
+            setDirty();
             return new PlayerArcaneData();
         });
     }

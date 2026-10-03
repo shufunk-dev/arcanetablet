@@ -1,44 +1,32 @@
 package net.arcanetablet.item;
 
 import net.arcanetablet.ArcaneTabletMod;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
-
-import java.util.function.Function;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ModItems {
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, ArcaneTabletMod.MOD_ID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ArcaneTabletMod.MOD_ID);
 
-    public static final RegistryKey<ItemGroup> ARCANE_TABLET_GROUP_KEY =
-            RegistryKey.of(RegistryKeys.ITEM_GROUP, Identifier.of(ArcaneTabletMod.MOD_ID, "arcanetablet_group"));
+    public static final RegistryObject<Item> ARCANE_TABLET = ITEMS.register("arcane_tablet",
+            () -> new ArcaneTabletItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
-    public static final Item ARCANE_TABLET = registerItem("arcane_tablet",
-            settings -> new ArcaneTabletItem(settings.maxCount(1).rarity(Rarity.RARE)));
+    public static final RegistryObject<CreativeModeTab> ARCANE_TABLET_TAB = CREATIVE_MODE_TABS.register("arcanetablet_tab",
+            () -> CreativeModeTab.builder()
+                    .icon(() -> new ItemStack(ARCANE_TABLET.get()))
+                    .title(Component.literal("Arcane Tablet"))
+                    .displayItems((params, output) -> output.accept(ARCANE_TABLET.get()))
+                    .build());
 
-    public static final ItemGroup ARCANE_TABLET_GROUP = FabricItemGroup.builder()
-            .icon(() -> new ItemStack(ARCANE_TABLET))
-            .displayName(Text.literal("Arcane Tablet"))
-            .entries((displayContext, entries) -> {
-                entries.add(ARCANE_TABLET);
-            })
-            .build();
-
-    private static <T extends Item> T registerItem(String name, Function<Item.Settings, T> itemFactory) {
-        RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(ArcaneTabletMod.MOD_ID, name));
-        T item = itemFactory.apply(new Item.Settings().registryKey(key));
-        return Registry.register(Registries.ITEM, key, item);
-    }
-
-    public static void registerModItems() {
-        ArcaneTabletMod.LOGGER.info("Registering Mod Items for " + ArcaneTabletMod.MOD_ID);
-        Registry.register(Registries.ITEM_GROUP, ARCANE_TABLET_GROUP_KEY, ARCANE_TABLET_GROUP);
+    public static void register(BusGroup busGroup) {
+        ITEMS.register(busGroup);
+        CREATIVE_MODE_TABS.register(busGroup);
     }
 }
