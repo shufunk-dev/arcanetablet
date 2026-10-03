@@ -3,6 +3,8 @@ package net.arcanetablet.item;
 import net.arcanetablet.ArcaneTabletMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,8 +17,10 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, ArcaneTabletMod.MOD_ID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ArcaneTabletMod.MOD_ID);
 
+    public static final ResourceKey<Item> ARCANE_TABLET_KEY = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ArcaneTabletMod.MOD_ID, "arcane_tablet"));
+
     public static final DeferredHolder<Item, Item> ARCANE_TABLET = ITEMS.register("arcane_tablet",
-            () -> new ArcaneTabletItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+            () -> new ArcaneTabletItem(new Item.Properties().setId(ARCANE_TABLET_KEY).stacksTo(1).rarity(Rarity.RARE)));
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ARCANE_TABLET_TAB = CREATIVE_MODE_TABS.register("arcanetablet_tab",
             () -> CreativeModeTab.builder()
