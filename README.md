@@ -55,6 +55,7 @@ The **Arcane Tablet** enables pure survival players to execute balanced, lore-fr
 | **Ancient City** | Subterranean sculk acoustic scan | **22 LVL** | *Sneak 100* (`adventure/sneak_past_sculk_sensor`) |
 | **Stronghold** | Scan for Ender portal frame | **25 LVL** | *Eye Spy* (`story/enter_the_stronghold`) |
 | **End City** | Scan void islands for purpur towers | **25 LVL** | *The City at the End* (`end/find_end_city`) |
+| **Amethyst Geode** | Scans strata for budding amethyst crystals | **12 LVL** | *Is It a Bird?* (`adventure/spyglass_at_parrot`) |
 | **Wayfarer's Survey** | Biome scanner (Cherry, Jungle, etc.) | **10 LVL** | *Adventuring Time* (`adventure/adventuring_time`) |
 
 ---
