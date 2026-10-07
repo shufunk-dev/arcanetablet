@@ -85,9 +85,9 @@ The **Arcane Tablet** enables pure survival players to execute balanced, lore-fr
 Crafted at a standard Crafting Table:
 
 ```text
-[ Gold Ingot ]   [ Amethyst Shard ]  [ Gold Ingot ]
-[  Redstone  ]   [    Compass     ]  [  Redstone  ]
-[ Gold Ingot ]   [    Obsidian    ]  [ Gold Ingot ]
+[ Gold Ingot ]   [ Lapis / Amethyst / Diamond / Emerald ]  [ Gold Ingot ]
+[  Redstone  ]   [               Compass                ]  [  Redstone  ]
+[ Gold Ingot ]   [               Obsidian               ]  [ Gold Ingot ]
 ```
 
 ---
