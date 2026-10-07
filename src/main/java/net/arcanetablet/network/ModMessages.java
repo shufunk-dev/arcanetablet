@@ -369,6 +369,10 @@ public class ModMessages {
                 BlockPos foundPos = locateStructureKey(world, StructureKeys.END_CITY, player.getBlockPos());
                 return handleLocate(world, player, data, "End City", foundPos);
             }
+            case LOCATE_AMETHYST_GEODE -> {
+                BlockPos foundPos = locateAmethystGeode(world, player.getBlockPos());
+                return handleLocate(world, player, data, "Amethyst Geode", foundPos);
+            }
             case WAYFARERS_SURVEY -> {
                 // Find nearest rare biome
                 Pair<BlockPos, RegistryEntry<Biome>> biomeResult = world.locateBiome(
@@ -534,6 +538,63 @@ public class ModMessages {
         if (entry.isEmpty()) return null;
         Pair<BlockPos, RegistryEntry<Structure>> res = world.getChunkManager().getChunkGenerator().locateStructure(world, RegistryEntryList.of(entry.get()), center, 100, false);
         return res != null ? res.getFirst() : null;
+    }
+
+    private static BlockPos locateAmethystGeode(ServerWorld world, BlockPos center) {
+        int centerChunkX = center.getX() >> 4;
+        int centerChunkZ = center.getZ() >> 4;
+        int maxRadius = 18;
+
+        BlockPos closestPos = null;
+        double closestDistSq = Double.MAX_VALUE;
+
+        for (int r = 0; r <= maxRadius; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (r > 0 && Math.abs(dx) != r && Math.abs(dz) != r) continue;
+
+                    int cx = centerChunkX + dx;
+                    int cz = centerChunkZ + dz;
+
+                    net.minecraft.world.chunk.Chunk chunk = world.getChunk(cx, cz, net.minecraft.world.chunk.ChunkStatus.FULL, false);
+                    if (chunk == null) {
+                        chunk = world.getChunkManager().getChunk(cx, cz, net.minecraft.world.chunk.ChunkStatus.FULL, true);
+                    }
+                    if (chunk == null) continue;
+
+                    net.minecraft.world.chunk.ChunkSection[] sections = chunk.getSectionArray();
+                    for (int sIdx = 0; sIdx < sections.length; sIdx++) {
+                        net.minecraft.world.chunk.ChunkSection section = sections[sIdx];
+                        if (section == null || section.isEmpty()) continue;
+
+                        int bottomY = chunk.getBottomY() + (sIdx * 16);
+                        if (bottomY > 32 || bottomY < -64) continue;
+
+                        if (section.hasAny(state -> state.isOf(Blocks.BUDDING_AMETHYST) || state.isOf(Blocks.AMETHYST_BLOCK))) {
+                            for (int x = 0; x < 16; x++) {
+                                for (int y = 0; y < 16; y++) {
+                                    for (int z = 0; z < 16; z++) {
+                                        BlockState state = section.getBlockState(x, y, z);
+                                        if (state.isOf(Blocks.BUDDING_AMETHYST) || state.isOf(Blocks.AMETHYST_BLOCK)) {
+                                            BlockPos pos = new BlockPos((cx << 4) + x, bottomY + y, (cz << 4) + z);
+                                            double distSq = center.getSquaredDistance(pos);
+                                            if (distSq < closestDistSq) {
+                                                closestDistSq = distSq;
+                                                closestPos = pos;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (closestPos != null) {
+                return closestPos;
+            }
+        }
+        return closestPos;
     }
 
     private static void spawnParticles(ServerWorld world, BlockPos pos, net.minecraft.particle.ParticleEffect particle, int count) {

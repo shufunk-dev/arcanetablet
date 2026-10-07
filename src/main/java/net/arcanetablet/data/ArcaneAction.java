@@ -146,6 +146,15 @@ public enum ArcaneAction {
             "The City at the End",
             "minecraft:end/find_end_city"
     ),
+    LOCATE_AMETHYST_GEODE(
+            "locate_amethyst_geode",
+            ArcaneCategory.NAVIGATION,
+            "Amethyst Geode",
+            "Scans subterranean strata to detect crystalline budding amethyst geodes.",
+            12,
+            "Is It a Bird?",
+            "minecraft:adventure/spyglass_at_parrot"
+    ),
     WAYFARERS_SURVEY(
             "wayfarers_survey",
             ArcaneCategory.NAVIGATION,
@@ -317,6 +326,7 @@ public enum ArcaneAction {
             case LOCATE_MONUMENT -> player.getInventory().contains(Items.PRISMARINE_SHARD.getDefaultStack()) || player.getInventory().contains(Items.PRISMARINE.getDefaultStack()) || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.SWIM_ONE_CM)) > 10000;
             case LOCATE_OUTPOST -> player.getInventory().contains(Items.CROSSBOW.getDefaultStack()) || player.getInventory().contains(Items.OMINOUS_BOTTLE.getDefaultStack()) || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.RAID_TRIGGER)) > 0;
             case LOCATE_END_CITY -> player.getInventory().contains(Items.PURPUR_BLOCK.getDefaultStack()) || player.getInventory().contains(Items.CHORUS_FRUIT.getDefaultStack()) || player.getInventory().contains(Items.SHULKER_SHELL.getDefaultStack());
+            case LOCATE_AMETHYST_GEODE -> player.getInventory().contains(Items.AMETHYST_SHARD.getDefaultStack()) || player.getInventory().contains(Items.SPYGLASS.getDefaultStack()) || player.getInventory().contains(Items.AMETHYST_BLOCK.getDefaultStack()) || player.getStatHandler().getStat(Stats.MINED.getOrCreateStat(net.minecraft.block.Blocks.STONE)) > 30;
             case WAYFARERS_SURVEY -> player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.WALK_ONE_CM)) > 10000 || player.getInventory().contains(Items.MAP.getDefaultStack()) || player.getInventory().contains(Items.FILLED_MAP.getDefaultStack());
             case TURN_UNDEAD -> player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.MOB_KILLS)) > 0;
             case WARDING_WARD -> player.getInventory().contains(Items.JUKEBOX.getDefaultStack()) || player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_RECORD)) > 0;
