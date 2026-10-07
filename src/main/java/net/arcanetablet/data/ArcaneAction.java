@@ -154,8 +154,8 @@ public enum ArcaneAction {
             "Amethyst Geode",
             "Scans subterranean strata to detect crystalline budding amethyst geodes.",
             12,
-            "Is It a Bird?",
-            "minecraft:adventure/spyglass_at_parrot"
+            "Stone Age",
+            "minecraft:story/mine_stone"
     ),
     WAYFARERS_SURVEY(
             "wayfarers_survey",
@@ -328,7 +328,7 @@ public enum ArcaneAction {
             case LOCATE_MONUMENT -> player.getInventory().contains(Items.PRISMARINE_SHARD.getDefaultInstance()) || player.getInventory().contains(Items.PRISMARINE.getDefaultInstance()) || player.getStats().getValue(Stats.CUSTOM.get(Stats.SWIM_ONE_CM)) > 10000;
             case LOCATE_OUTPOST -> player.getInventory().contains(Items.CROSSBOW.getDefaultInstance()) || player.getInventory().contains(Items.OMINOUS_BOTTLE.getDefaultInstance()) || player.getStats().getValue(Stats.CUSTOM.get(Stats.RAID_TRIGGER)) > 0;
             case LOCATE_END_CITY -> player.getInventory().contains(Items.PURPUR_BLOCK.getDefaultInstance()) || player.getInventory().contains(Items.CHORUS_FRUIT.getDefaultInstance()) || player.getInventory().contains(Items.SHULKER_SHELL.getDefaultInstance());
-            case LOCATE_AMETHYST_GEODE -> player.getInventory().contains(Items.AMETHYST_SHARD.getDefaultInstance()) || player.getInventory().contains(Items.SPYGLASS.getDefaultInstance()) || player.getInventory().contains(Items.AMETHYST_BLOCK.getDefaultInstance()) || player.getStats().getValue(Stats.BLOCK_MINED.get(Blocks.STONE)) > 30;
+            case LOCATE_AMETHYST_GEODE -> true;
             case WAYFARERS_SURVEY -> player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > 10000 || player.getInventory().contains(Items.MAP.getDefaultInstance()) || player.getInventory().contains(Items.FILLED_MAP.getDefaultInstance());
             case TURN_UNDEAD -> player.getStats().getValue(Stats.CUSTOM.get(Stats.MOB_KILLS)) > 0;
             case WARDING_WARD -> player.getInventory().contains(Items.JUKEBOX.getDefaultInstance()) || player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_RECORD)) > 0;
