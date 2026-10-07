@@ -95,7 +95,7 @@ Crafted at a standard Crafting Table:
 ## 📥 Installation (NeoForge)
 
 1. Install **NeoForge** (21.11.45 or newer) for **Minecraft 1.21.4 / 1.21.11**.
-2. Download **Arcane Tablet (NeoForge)** (`arcanetablet-neoforge-1.21.11-1.0.0.jar`) and place it into your `.minecraft/mods` folder.
+2. Download **Arcane Tablet (NeoForge)** (`arcanetablet-neoforge-1.21.11-1.0.1.jar`) and place it into your `.minecraft/mods` folder.
 3. *No additional library or API dependencies required!*
 4. Launch the game, craft your tablet, and right-click to open the matrix!
 
