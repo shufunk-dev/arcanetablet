@@ -96,7 +96,7 @@ Crafted at a standard Crafting Table:
 
 1. Install **Fabric Loader** (0.16.0 or newer) for **Minecraft 1.21.4 / 1.21.11**.
 2. Download and place **[Fabric API](https://curseforge.com/minecraft/mc-mods/fabric-api)** into your `.minecraft/mods` folder.
-3. Download **Arcane Tablet (Fabric)** (`arcanetablet-fabric-1.21.11-1.0.0.jar`) and place it in `.minecraft/mods`.
+3. Download **Arcane Tablet (Fabric)** (`arcanetablet-fabric-1.21.11-1.0.1.jar`) and place it in `.minecraft/mods`.
 4. Launch the game, craft your tablet, and right-click to open the matrix!
 
 ---
