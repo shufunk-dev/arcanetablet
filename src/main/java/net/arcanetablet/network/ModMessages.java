@@ -479,6 +479,10 @@ public class ModMessages {
                 BlockPos foundPos = locateStructureKey(world, BuiltinStructures.END_CITY, player.blockPosition());
                 return handleLocate(world, player, data, "End City", foundPos);
             }
+            case LOCATE_AMETHYST_GEODE -> {
+                BlockPos foundPos = locateAmethystGeode(world, player.blockPosition());
+                return handleLocate(world, player, data, "Amethyst Geode", foundPos);
+            }
             case WAYFARERS_SURVEY -> {
                 Pair<BlockPos, Holder<Biome>> biomeResult = world.findClosestBiome3d(
                         holder -> holder.is(Biomes.CHERRY_GROVE) || holder.is(Biomes.MUSHROOM_FIELDS) || holder.is(Biomes.BADLANDS) || holder.is(Biomes.JUNGLE) || holder.is(Biomes.DEEP_DARK),
@@ -633,6 +637,63 @@ public class ModMessages {
         if (entry.isEmpty()) return null;
         Pair<BlockPos, Holder<Structure>> res = world.getChunkSource().getGenerator().findNearestMapStructure(world, HolderSet.direct(entry.get()), center, 100, false);
         return res != null ? res.getFirst() : null;
+    }
+
+    private static BlockPos locateAmethystGeode(ServerLevel world, BlockPos center) {
+        int centerChunkX = center.getX() >> 4;
+        int centerChunkZ = center.getZ() >> 4;
+        int maxRadius = 18;
+
+        BlockPos closestPos = null;
+        double closestDistSq = Double.MAX_VALUE;
+
+        for (int r = 0; r <= maxRadius; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (r > 0 && Math.abs(dx) != r && Math.abs(dz) != r) continue;
+
+                    int cx = centerChunkX + dx;
+                    int cz = centerChunkZ + dz;
+
+                    net.minecraft.world.level.chunk.ChunkAccess chunk = world.getChunk(cx, cz, net.minecraft.world.level.chunk.status.ChunkStatus.FULL, false);
+                    if (chunk == null) {
+                        chunk = world.getChunkSource().getChunk(cx, cz, net.minecraft.world.level.chunk.status.ChunkStatus.FULL, true);
+                    }
+                    if (chunk == null) continue;
+
+                    net.minecraft.world.level.chunk.LevelChunkSection[] sections = chunk.getSections();
+                    for (int sIdx = 0; sIdx < sections.length; sIdx++) {
+                        net.minecraft.world.level.chunk.LevelChunkSection section = sections[sIdx];
+                        if (section == null || section.hasOnlyAir()) continue;
+
+                        int bottomY = chunk.getMinY() + (sIdx * 16);
+                        if (bottomY > 32 || bottomY < -64) continue;
+
+                        if (section.maybeHas(state -> state.is(Blocks.BUDDING_AMETHYST) || state.is(Blocks.AMETHYST_BLOCK))) {
+                            for (int x = 0; x < 16; x++) {
+                                for (int y = 0; y < 16; y++) {
+                                    for (int z = 0; z < 16; z++) {
+                                        BlockState state = section.getBlockState(x, y, z);
+                                        if (state.is(Blocks.BUDDING_AMETHYST) || state.is(Blocks.AMETHYST_BLOCK)) {
+                                            BlockPos pos = new BlockPos((cx << 4) + x, bottomY + y, (cz << 4) + z);
+                                            double distSq = center.distSqr(pos);
+                                            if (distSq < closestDistSq) {
+                                                closestDistSq = distSq;
+                                                closestPos = pos;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (closestPos != null) {
+                return closestPos;
+            }
+        }
+        return closestPos;
     }
 
     private static void spawnParticles(ServerLevel world, BlockPos pos, ParticleOptions particle, int count) {
