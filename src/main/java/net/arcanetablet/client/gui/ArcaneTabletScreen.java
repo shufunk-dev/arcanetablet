@@ -8,7 +8,7 @@ import net.arcanetablet.network.ModMessages.BankActionPayload;
 import net.arcanetablet.network.ModMessages.ExecuteActionPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -189,7 +189,7 @@ public class ArcaneTabletScreen extends Screen {
         ModMessages.sendToServer(new BankActionPayload(type));
     }
 
-    private void drawHoloBorder(GuiGraphics context, int x, int y, int width, int height, int color) {
+    private void drawHoloBorder(GuiGraphicsExtractor context, int x, int y, int width, int height, int color) {
         context.fill(x, y, x + width, y + 1, color);
         context.fill(x, y + height - 1, x + width, y + height, color);
         context.fill(x, y, x + 1, y + height, color);
@@ -197,7 +197,7 @@ public class ArcaneTabletScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         currentTooltip.clear();
 
         // 1. Dim World Background
@@ -207,7 +207,7 @@ public class ArcaneTabletScreen extends Screen {
         renderHologramBackdrop(context);
 
         // 3. Render Buttons & Components first
-        super.render(context, mouseX, mouseY, delta);
+        super.extractRenderState(context, mouseX, mouseY, delta);
 
         // 4. Render Headers & Telemetry
         renderHeaders(context);
@@ -227,7 +227,7 @@ public class ArcaneTabletScreen extends Screen {
         }
     }
 
-    private void renderHologramBackdrop(GuiGraphics context) {
+    private void renderHologramBackdrop(GuiGraphicsExtractor context) {
         // Holographic Glass Body
         context.fillGradient(guiLeft, guiTop, guiLeft + guiWidth, guiTop + guiHeight, 0xF0040E14, 0xF00A1C28);
 
@@ -256,9 +256,9 @@ public class ArcaneTabletScreen extends Screen {
         context.fill(guiLeft + 4, guiTop + guiHeight - 20, guiLeft + guiWidth - 4, guiTop + guiHeight - 19, 0x4400E5FF);
     }
 
-    private void renderHeaders(GuiGraphics context) {
+    private void renderHeaders(GuiGraphicsExtractor context) {
         // Left Title
-        context.drawString(font, Component.literal("⚡ ARCANE TABLET").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), guiLeft + 12, guiTop + 8, 0xFF00E5FF, true);
+        context.text(font, Component.literal("⚡ ARCANE TABLET").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), guiLeft + 12, guiTop + 8, 0xFF00E5FF, true);
 
         // Right Telemetry (Clean separated positioning)
         if (minecraft != null && minecraft.player != null) {
@@ -266,11 +266,11 @@ public class ArcaneTabletScreen extends Screen {
             String dim = minecraft.player.level().dimension().identifier().getPath().toUpperCase();
             String telemetry = String.format("[%d, %d, %d] | %s", pPos.getX(), pPos.getY(), pPos.getZ(), dim);
             int textW = font.width(telemetry);
-            context.drawString(font, Component.literal(telemetry).withStyle(ChatFormatting.DARK_AQUA), guiLeft + guiWidth - textW - 28, guiTop + 9, 0xFF00A0B0, false);
+            context.text(font, Component.literal(telemetry).withStyle(ChatFormatting.DARK_AQUA), guiLeft + guiWidth - textW - 28, guiTop + 9, 0xFF00A0B0, false);
         }
     }
 
-    private void renderBankPanel(GuiGraphics context, int mouseX, int mouseY) {
+    private void renderBankPanel(GuiGraphicsExtractor context, int mouseX, int mouseY) {
         int panelX = guiLeft + guiWidth - 122;
         int panelY = guiTop + 50;
         int panelW = 110;
@@ -281,15 +281,15 @@ public class ArcaneTabletScreen extends Screen {
         drawHoloBorder(context, panelX, panelY, panelW, panelH, 0x7700E5FF);
 
         // Panel Title
-        context.drawString(font, Component.literal("⚡ ENERGY CORE").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), panelX + 8, panelY + 6, 0xFF00E5FF, false);
+        context.text(font, Component.literal("⚡ ENERGY CORE").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), panelX + 8, panelY + 6, 0xFF00E5FF, false);
         context.fill(panelX + 4, panelY + 16, panelX + panelW - 4, panelY + 17, 0x4400E5FF);
 
         // Stat readouts
         int pLvl = (minecraft != null && minecraft.player != null) ? minecraft.player.experienceLevel : 0;
         int bLvl = ArcaneTabletClient.BANK_LEVELS;
 
-        context.drawString(font, Component.literal("Player: §e" + pLvl + " Lvl"), panelX + 8, panelY + 21, 0xFFCCCCCC, false);
-        context.drawString(font, Component.literal("Tablet: §a" + bLvl + " Lvl"), panelX + 8, panelY + 33, 0xFF55FF55, false);
+        context.text(font, Component.literal("Player: §e" + pLvl + " Lvl"), panelX + 8, panelY + 21, 0xFFCCCCCC, false);
+        context.text(font, Component.literal("Tablet: §a" + bLvl + " Lvl"), panelX + 8, panelY + 33, 0xFF55FF55, false);
 
         // Active Buff / Status bottom box
         int subBoxY = panelY + 82;
@@ -298,32 +298,32 @@ public class ArcaneTabletScreen extends Screen {
         drawHoloBorder(context, panelX + 4, subBoxY, panelW - 8, subBoxH, 0x4400E5FF);
 
         if (ArcaneTabletClient.TETHER_SEC_REMAINING > 0) {
-            context.drawString(font, Component.literal("§d🔮 TETHER").withStyle(ChatFormatting.BOLD), panelX + 8, subBoxY + 6, 0xFFB388FF, false);
+            context.text(font, Component.literal("§d🔮 TETHER").withStyle(ChatFormatting.BOLD), panelX + 8, subBoxY + 6, 0xFFB388FF, false);
             long mins = ArcaneTabletClient.TETHER_SEC_REMAINING / 60;
             long secs = ArcaneTabletClient.TETHER_SEC_REMAINING % 60;
-            context.drawString(font, Component.literal(String.format("§f%02d:%02d §7remaining", mins, secs)), panelX + 8, subBoxY + 22, 0xFFDDDDDD, false);
-            context.drawString(font, Component.literal("§a✔ Saved On Death"), panelX + 8, subBoxY + 38, 0xFF55FF55, false);
+            context.text(font, Component.literal(String.format("§f%02d:%02d §7remaining", mins, secs)), panelX + 8, subBoxY + 22, 0xFFDDDDDD, false);
+            context.text(font, Component.literal("§a✔ Saved On Death"), panelX + 8, subBoxY + 38, 0xFF55FF55, false);
         } else if (activeCategory == ArcaneCategory.NAVIGATION) {
-            context.drawString(font, Component.literal("§e🧭 RADAR").withStyle(ChatFormatting.BOLD), panelX + 8, subBoxY + 6, 0xFFFFD700, false);
+            context.text(font, Component.literal("§e🧭 RADAR").withStyle(ChatFormatting.BOLD), panelX + 8, subBoxY + 6, 0xFFFFD700, false);
             if (!ArcaneTabletClient.LAST_SCAN_STRUCT.isEmpty() && ArcaneTabletClient.LAST_SCAN_POS != null) {
                 String sName = ArcaneTabletClient.LAST_SCAN_STRUCT;
                 if (sName.length() > 13) sName = sName.substring(0, 11) + "..";
-                context.drawString(font, Component.literal("§a" + sName), panelX + 8, subBoxY + 20, 0xFF55FF55, false);
-                context.drawString(font, Component.literal("§7" + ArcaneTabletClient.LAST_SCAN_DIST + "m away"), panelX + 8, subBoxY + 34, 0xFFCCCCCC, false);
-                context.drawString(font, Component.literal("§8[" + ArcaneTabletClient.LAST_SCAN_POS.getX() + ", " + ArcaneTabletClient.LAST_SCAN_POS.getZ() + "]"), panelX + 8, subBoxY + 47, 0xFF888888, false);
+                context.text(font, Component.literal("§a" + sName), panelX + 8, subBoxY + 20, 0xFF55FF55, false);
+                context.text(font, Component.literal("§7" + ArcaneTabletClient.LAST_SCAN_DIST + "m away"), panelX + 8, subBoxY + 34, 0xFFCCCCCC, false);
+                context.text(font, Component.literal("§8[" + ArcaneTabletClient.LAST_SCAN_POS.getX() + ", " + ArcaneTabletClient.LAST_SCAN_POS.getZ() + "]"), panelX + 8, subBoxY + 47, 0xFF888888, false);
             } else {
-                context.drawString(font, Component.literal("§7Radar: §fIdle"), panelX + 8, subBoxY + 22, 0xFFCCCCCC, false);
-                context.drawString(font, Component.literal("§8Ready to scan"), panelX + 8, subBoxY + 38, 0xFF888888, false);
+                context.text(font, Component.literal("§7Radar: §fIdle"), panelX + 8, subBoxY + 22, 0xFFCCCCCC, false);
+                context.text(font, Component.literal("§8Ready to scan"), panelX + 8, subBoxY + 38, 0xFF888888, false);
             }
         } else {
             int totalEnergy = pLvl + bLvl;
-            context.drawString(font, Component.literal("§b⚡ CORE ONLINE").withStyle(ChatFormatting.BOLD), panelX + 8, subBoxY + 6, 0xFF00E5FF, false);
-            context.drawString(font, Component.literal("§7Pool: §e" + totalEnergy + " Lvl §7avail"), panelX + 8, subBoxY + 22, 0xFFEEEEEE, false);
-            context.drawString(font, Component.literal("§a✔ Soul XP Linked"), panelX + 8, subBoxY + 38, 0xFF55FF55, false);
+            context.text(font, Component.literal("§b⚡ CORE ONLINE").withStyle(ChatFormatting.BOLD), panelX + 8, subBoxY + 6, 0xFF00E5FF, false);
+            context.text(font, Component.literal("§7Pool: §e" + totalEnergy + " Lvl §7avail"), panelX + 8, subBoxY + 22, 0xFFEEEEEE, false);
+            context.text(font, Component.literal("§a✔ Soul XP Linked"), panelX + 8, subBoxY + 38, 0xFF55FF55, false);
         }
     }
 
-    private void renderActionCards(GuiGraphics context, int mouseX, int mouseY) {
+    private void renderActionCards(GuiGraphicsExtractor context, int mouseX, int mouseY) {
         List<ArcaneAction> categoryActions = new ArrayList<>();
         for (ArcaneAction action : ArcaneAction.values()) {
             if (action.getCategory() == activeCategory) {
@@ -369,18 +369,18 @@ public class ArcaneTabletScreen extends Screen {
             int costW = font.width(costText);
             int btnX = cardX + cardWidth - 60 - 6;
             int costX = btnX - costW - 6;
-            context.drawString(font, Component.literal(costText).withStyle(ChatFormatting.GOLD), costX, cardY + 4, 0xFFFFAA00, false);
+            context.text(font, Component.literal(costText).withStyle(ChatFormatting.GOLD), costX, cardY + 4, 0xFFFFAA00, false);
 
             // Action Title (bounded by cost badge position)
             int titleColor = unlocked ? 0xFFFFFFFF : 0xFF888888;
             int maxTitleWidth = costX - (cardX + 6) - 4;
             String titleStr = font.plainSubstrByWidth(action.getTitle(), maxTitleWidth);
-            context.drawString(font, Component.literal(titleStr).withStyle(unlocked ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY, ChatFormatting.BOLD), cardX + 6, cardY + 4, titleColor, false);
+            context.text(font, Component.literal(titleStr).withStyle(unlocked ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY, ChatFormatting.BOLD), cardX + 6, cardY + 4, titleColor, false);
 
             // Action Description (bounded by button position)
             int maxDescWidth = btnX - (cardX + 6) - 4;
             String descStr = font.plainSubstrByWidth(action.getDescription(), maxDescWidth);
-            context.drawString(font, Component.literal(descStr).withStyle(ChatFormatting.GRAY), cardX + 6, cardY + 17, 0xFFAAAAAA, false);
+            context.text(font, Component.literal(descStr).withStyle(ChatFormatting.GRAY), cardX + 6, cardY + 17, 0xFFAAAAAA, false);
 
             // Hover tooltip for requirements & details
             if (isHovered && mouseX < cardX + cardWidth - 65) {
@@ -400,11 +400,11 @@ public class ArcaneTabletScreen extends Screen {
         // Paging page number text
         if (totalPages > 1) {
             String pageStr = String.format("PAGE %d / %d", pageIndex + 1, totalPages);
-            context.drawString(font, Component.literal(pageStr).withStyle(ChatFormatting.AQUA), guiLeft + 36, guiTop + 195, 0xFF00E5FF, false);
+            context.text(font, Component.literal(pageStr).withStyle(ChatFormatting.AQUA), guiLeft + 36, guiTop + 195, 0xFF00E5FF, false);
         }
     }
 
-    private void renderFooterStatus(GuiGraphics context) {
+    private void renderFooterStatus(GuiGraphicsExtractor context) {
         int footerY = guiTop + guiHeight - 14;
         int statusColor = switch (ArcaneTabletClient.STATUS_CODE) {
             case 1 -> 0xFF55FF55; // Green
@@ -414,14 +414,14 @@ public class ArcaneTabletScreen extends Screen {
 
         String msg = "STATUS: " + ArcaneTabletClient.STATUS_MESSAGE;
         if (msg.length() > 36) msg = msg.substring(0, 34) + "..";
-        context.drawString(font, Component.literal(msg), guiLeft + 12, footerY, statusColor, true);
+        context.text(font, Component.literal(msg), guiLeft + 12, footerY, statusColor, true);
 
         // Dynamic World Mode Indicator on bottom right
         boolean isOp = ArcaneTabletClient.IS_OP;
         String modeText = isOp ? "§7WORLD: §eCHEATS ON §6[OP]" : "§7WORLD: §aPURE SURVIVAL §b[LEGIT]";
         int badgeW = font.width(Component.literal(modeText));
         int badgeX = guiLeft + guiWidth - badgeW - 14;
-        context.drawString(font, Component.literal(modeText), badgeX, footerY, 0xFFFFFFFF, false);
+        context.text(font, Component.literal(modeText), badgeX, footerY, 0xFFFFFFFF, false);
     }
 
     @Override

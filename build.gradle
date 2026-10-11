@@ -11,7 +11,7 @@ base {
     archivesName = "${project.mod_id}-neoforge-${project.minecraft_version}"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 neoForge {
     version = project.neoforge_version
@@ -78,3 +78,22 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
+tasks.register('deployMod') {
+    dependsOn jar
+    doLast {
+        def src = jar.archiveFile.get().asFile
+        def targetDirs = [
+            file("C:/Projects/Command/scratch/mods"),
+            file("C:/Users/shufu/Downloads/Finished Mods"),
+            file("C:/Users/shufu/curseforge/minecraft/Instances/Neo/mods")
+        ]
+        targetDirs.each { dir ->
+            if (!dir.exists()) dir.mkdirs()
+            def dest = new File(dir, src.name)
+            java.nio.file.Files.copy(src.toPath(), dest.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            println "DEPLOYED TO: " + dest.absolutePath + " (" + dest.length() + " bytes)"
+        }
+    }
+}
+
