@@ -102,9 +102,9 @@ Crafted at a standard Crafting Table:
 1. Install **Fabric Loader** (`0.19.5+`), **Forge** (`66.0.10+`), or **NeoForge** (`26.3.0.69+`) for **Minecraft 26.3**.
 2. For Fabric, place **[Fabric API](https://curseforge.com/minecraft/mc-mods/fabric-api)** (`0.162.0+26.3`) into your `mods` folder.
 3. Download the matching **Arcane Tablet** jar:
-   - `arcanetablet-fabric-26.3-1.0.1.jar`
-   - `arcanetablet-forge-26.3-1.0.1.jar`
-   - `arcanetablet-neoforge-26.3-1.0.1.jar`
+   - `arcanetablet-fabric-26.3-1.0.2.jar`
+   - `arcanetablet-forge-26.3-1.0.2.jar`
+   - `arcanetablet-neoforge-26.3-1.0.2.jar`
 4. Place the jar into your `.minecraft/mods` folder.
 5. Launch the game, craft your tablet, and right-click to engage the Quantum Command Matrix!
 

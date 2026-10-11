@@ -1,6 +1,6 @@
 # 📜 Arcane Tablet — Changelog
 
-## [1.0.1] — Minecraft 26.3 Release
+## [1.0.2] — Minecraft 26.3 Release
 
 ### 🚀 Highlights & Platform Support
 - **Full Port to Minecraft 26.3:** Native compatibility implemented across all 3 major mod loaders:
@@ -34,6 +34,6 @@
 ---
 
 ### 📦 Artifact Distribution
-- `arcanetablet-fabric-26.3-1.0.1.jar`
-- `arcanetablet-forge-26.3-1.0.1.jar`
-- `arcanetablet-neoforge-26.3-1.0.1.jar`
+- `arcanetablet-fabric-26.3-1.0.2.jar`
+- `arcanetablet-forge-26.3-1.0.2.jar`
+- `arcanetablet-neoforge-26.3-1.0.2.jar`
