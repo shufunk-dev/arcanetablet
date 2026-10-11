@@ -17,7 +17,7 @@ public class ArcaneTabletMod {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public ArcaneTabletMod(FMLJavaModLoadingContext context) {
-        LOGGER.info("Initializing Arcane Tablet Mod (Forge 1.21.11 / 61.2.0)!");
+        LOGGER.info("Initializing Arcane Tablet Mod (Forge 26.3 / 66.0.10)!");
         BusGroup modBusGroup = context.getModBusGroup();
 
         ModSounds.register(modBusGroup);

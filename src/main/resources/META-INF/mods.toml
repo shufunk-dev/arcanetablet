@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="[61,)"
+loaderVersion="[66,)"
 license="MIT"
 
 [[mods]]
 modId="arcanetablet"
-version="1.0.0"
+version="1.0.1"
 displayName="Arcane Tablet"
 updateJSONURL=""
 displayURL="https://github.com/shufunk-dev/arcanetablet"
@@ -18,13 +18,13 @@ Quantum Command Matrix for pure survival gameplay. Execute lore-friendly world r
 [[dependencies.arcanetablet]]
 modId="forge"
 mandatory=true
-versionRange="[61,)"
+versionRange="[66,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.arcanetablet]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.21.11,1.22)"
+versionRange="[26.3,)"
 ordering="NONE"
 side="BOTH"

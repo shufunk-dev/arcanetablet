@@ -5,7 +5,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
@@ -315,8 +315,8 @@ public enum ArcaneAction {
         return switch (this) {
             case CALL_THE_DAWN -> player.getStats().getValue(Stats.CUSTOM.get(Stats.SLEEP_IN_BED)) > 0 || player.getInventory().contains(Items.CLOCK.getDefaultInstance());
             case PART_THE_STORM -> player.getInventory().contains(Items.WHEAT_SEEDS.getDefaultInstance()) || player.getInventory().contains(Items.WATER_BUCKET.getDefaultInstance());
-            case GATHER_THE_GALE -> player.getInventory().contains(Items.LIGHTNING_ROD.getDefaultInstance()) || player.getInventory().contains(Items.TRIDENT.getDefaultInstance());
-            case LUNAR_HALT -> player.getStats().getValue(Stats.ENTITY_KILLED.get(EntityType.PHANTOM)) > 0 || player.getInventory().contains(Items.PHANTOM_MEMBRANE.getDefaultInstance());
+            case GATHER_THE_GALE -> player.getInventory().contains(Items.LIGHTNING_ROD.weathering().unaffected().getDefaultInstance()) || player.getInventory().contains(Items.TRIDENT.getDefaultInstance());
+            case LUNAR_HALT -> player.getStats().getValue(Stats.ENTITY_KILLED.get(EntityTypes.PHANTOM)) > 0 || player.getInventory().contains(Items.PHANTOM_MEMBRANE.getDefaultInstance());
             case BEACON_TETHER -> player.getInventory().contains(Items.LODESTONE.getDefaultInstance()) || player.getInventory().contains(Items.COMPASS.getDefaultInstance());
             case SUBSPACE_GATEWAY -> player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > 50000;
             case LOCATE_VILLAGE -> player.getStats().getValue(Stats.CUSTOM.get(Stats.TALKED_TO_VILLAGER)) > 0 || player.getInventory().contains(Items.EMERALD.getDefaultInstance());

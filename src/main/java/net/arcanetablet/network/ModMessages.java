@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.clock.ClockTimeMarkers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -337,38 +338,45 @@ public class ModMessages {
         switch (action) {
             // 1. Environmental Control
             case CALL_THE_DAWN -> {
-                long current = world.getDayTime();
-                long nextDawn = ((current / 24000L) + 1L) * 24000L + 1000L;
-                world.setDayTime(nextDawn);
+                world.dimensionTypeRegistration().value().defaultClock().ifPresent(clock -> {
+                    world.getServer().clockManager().moveToTimeMarker(clock, ClockTimeMarkers.DAY);
+                });
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.TABLET_EXECUTE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
                 spawnParticles(world, player.blockPosition(), ParticleTypes.FLAME, 30);
-                player.sendSystemMessage(Component.literal("§e☀ [Call the Dawn] Time accelerated to morning daylight (1000 ticks)."));
+                player.sendSystemMessage(Component.literal("§e☀ [Call the Dawn] Time accelerated to morning daylight."));
                 return true;
             }
             case PART_THE_STORM -> {
-                world.setWeatherParameters(60000, 0, false, false);
+                var weather = world.getWeatherData();
+                weather.setClearWeatherTime(60000);
+                weather.setRainTime(0);
+                weather.setThunderTime(0);
+                weather.setRaining(false);
+                weather.setThundering(false);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.TABLET_EXECUTE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
                 spawnParticles(world, player.blockPosition(), ParticleTypes.CLOUD, 40);
                 player.sendSystemMessage(Component.literal("§b🌦 [Part the Storm] Skies cleared for 1 in-game day."));
                 return true;
             }
             case GATHER_THE_GALE -> {
-                world.setWeatherParameters(0, 12000, true, true);
+                var weather = world.getWeatherData();
+                weather.setClearWeatherTime(0);
+                weather.setRainTime(12000);
+                weather.setThunderTime(12000);
+                weather.setRaining(true);
+                weather.setThundering(true);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.TABLET_EXECUTE.get(), SoundSource.PLAYERS, 1.0f, 0.8f);
                 spawnParticles(world, player.blockPosition(), ParticleTypes.ELECTRIC_SPARK, 50);
                 player.sendSystemMessage(Component.literal("§9⚡ [Gather the Gale] Atmospheric surge triggered: Thunderstorm summoned!"));
                 return true;
             }
             case LUNAR_HALT -> {
-                long current = world.getDayTime();
-                long midnight = (current / 24000L) * 24000L + 18000L;
-                if (current % 24000L >= 18000L) {
-                    midnight += 24000L;
-                }
-                world.setDayTime(midnight);
+                world.dimensionTypeRegistration().value().defaultClock().ifPresent(clock -> {
+                    world.getServer().clockManager().moveToTimeMarker(clock, ClockTimeMarkers.MIDNIGHT);
+                });
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.TABLET_EXECUTE.get(), SoundSource.PLAYERS, 1.0f, 0.9f);
                 spawnParticles(world, player.blockPosition(), ParticleTypes.SCULK_SOUL, 30);
-                player.sendSystemMessage(Component.literal("§1🌙 [Lunar Halt] Midnight darkness locked (18000 ticks). Phantom & mob hunt active."));
+                player.sendSystemMessage(Component.literal("§1🌙 [Lunar Halt] Midnight darkness locked. Phantom & mob hunt active."));
                 return true;
             }
 

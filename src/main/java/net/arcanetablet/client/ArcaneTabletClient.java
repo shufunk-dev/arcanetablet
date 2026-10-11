@@ -58,7 +58,7 @@ public class ArcaneTabletClient {
             STATUS_TIME = System.currentTimeMillis();
 
             // If screen is open, refresh widgets
-            if (Minecraft.getInstance().screen instanceof ArcaneTabletScreen screen) {
+            if (Minecraft.getInstance().gui.screen() instanceof ArcaneTabletScreen screen) {
                 screen.refreshStatus();
             }
         });
@@ -69,7 +69,7 @@ public class ArcaneTabletClient {
         if (client.player != null) {
             // Request fresh telemetry from server
             ModMessages.sendToServer(new RequestSyncPacket());
-            client.setScreen(new ArcaneTabletScreen(Component.literal("Quantum Command Matrix"), stack));
+            client.gui.setScreen(new ArcaneTabletScreen(Component.literal("Quantum Command Matrix"), stack));
         }
     }
 }

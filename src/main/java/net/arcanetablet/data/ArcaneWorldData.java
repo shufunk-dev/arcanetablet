@@ -2,6 +2,7 @@ package net.arcanetablet.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -26,7 +27,7 @@ public class ArcaneWorldData extends SavedData {
     );
 
     public static final SavedDataType<ArcaneWorldData> TYPE = new SavedDataType<>(
-            DATA_NAME,
+            Identifier.fromNamespaceAndPath("arcanetablet", DATA_NAME),
             ArcaneWorldData::new,
             CODEC,
             DataFixTypes.SAVED_DATA_COMMAND_STORAGE
