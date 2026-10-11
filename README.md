@@ -1,19 +1,23 @@
-# ⚡ Arcane Tablet (Quantum Command Matrix) — Forge Edition
+# ⚡ Arcane Tablet (Quantum Command Matrix)
 
-[![Minecraft 1.21.4 / 1.21.11](https://img.shields.io/badge/Minecraft-1.21.4%20%2F%201.21.11-brightgreen.svg)](https://files.minecraftforge.net/)
-[![Forge Loader](https://img.shields.io/badge/Forge-61.2.0%2B-orange.svg)](https://files.minecraftforge.net/)
-[![Java 21](https://img.shields.io/badge/Java-21-blue.svg)](https://adoptium.net/)
+[![Minecraft 26.3](https://img.shields.io/badge/Minecraft-26.3-brightgreen.svg)](https://minecraft.net/)
+[![Fabric Loader](https://img.shields.io/badge/Fabric%20Loader-0.19.5-blue.svg)](https://fabricmc.net/)
+[![Forge](https://img.shields.io/badge/Forge-66.0.10-orange.svg)](https://files.minecraftforge.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-26.3.0.69--beta-red.svg)](https://neoforged.net/)
+[![Java 25](https://img.shields.io/badge/Java-25-purple.svg)](https://adoptium.net/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A standalone **Minecraft Forge** utility & magic mod for **Minecraft 1.21.4 / 1.21.11+**.
+A standalone utility & magic mod for **Minecraft 26.3** supporting **Fabric**, **Forge**, and **NeoForge**.
 
 The **Arcane Tablet** enables pure survival players to execute balanced, lore-friendly world manipulation rites **without enabling cheats or operator permissions**. Every command is strictly gated by **Experience Levels (XP)** and unlocked through **Vanilla Advancement Progression**.
 
 ---
 
-## 🌐 Other Loader Versions
-- **Fabric Edition (1.21.4 / 1.21.11):** Available on branch [`main`](https://github.com/shufunk-dev/arcanetablet/tree/main)
-- **NeoForge Edition (1.21.4 / 1.21.11):** Available on branch [`neoforge-1.21.4`](https://github.com/shufunk-dev/arcanetablet/tree/neoforge-1.21.4)
+## 🌐 Loader Branches
+- **Fabric Edition (26.3):** Branch [`fabric-26.3`](https://github.com/shufunk-dev/arcanetablet/tree/fabric-26.3)
+- **Forge Edition (26.3):** Branch [`forge-26.3`](https://github.com/shufunk-dev/arcanetablet/tree/forge-26.3)
+- **NeoForge Edition (26.3):** Branch [`neoforge-26.3`](https://github.com/shufunk-dev/arcanetablet/tree/neoforge-26.3)
+- *(Legacy 1.21.x branches: `main`, `forge-1.21.4`, `neoforge-1.21.4`)*
 
 ---
 
@@ -21,7 +25,7 @@ The **Arcane Tablet** enables pure survival players to execute balanced, lore-fr
 
 - **🛡️ 100% Legit Survival Compatibility:** Works out of the box in worlds with cheats/OP disabled.
 - **⚡ Dual Energy Core:** Cast directly using your character's XP or store surplus levels in the Tablet's internal XP bank.
-- **🧭 Discrete Structure Radar:** Search and pinpoint coordinates and distances for Villages, Ancient Cities, Trial Chambers, Nether Fortresses, Strongholds, Mineshafts, Ocean Monuments, Outposts, and End Cities.
+- **🧭 Discrete Structure & Geode Radar:** Search and pinpoint coordinates and distances for Amethyst Geodes, Villages, Ancient Cities, Trial Chambers, Nether Fortresses, Strongholds, Mineshafts, Ocean Monuments, Outposts, and End Cities.
 - **🌀 Cross-Dimensional Recall:** Return directly to your active Bed or Respawn Anchor across dimensions with Subspace Gateway.
 - **🌌 Lodestone Waypoint Teleportation:** Quantum-warp to any attuned Lodestone Compass across vanilla and modded dimensions.
 - **🔮 Soul Anchor (Death Insurance):** Activate Spirit Tether for a 10-minute temporary keep-inventory buff.
@@ -92,12 +96,16 @@ Crafted at a standard Crafting Table:
 
 ---
 
-## 📥 Installation (Forge)
+## 📥 Installation
 
-1. Install **Minecraft Forge** (61.2.0 or newer) for **Minecraft 1.21.4 / 1.21.11**.
-2. Download **Arcane Tablet (Forge)** (`arcanetablet-forge-1.21.11-1.0.1.jar`) and place it into your `.minecraft/mods` folder.
-3. *No additional library or API dependencies required!*
-4. Launch the game, craft your tablet, and right-click to open the matrix!
+1. Install **Fabric Loader** (`0.19.5+`), **Forge** (`66.0.10+`), or **NeoForge** (`26.3.0.69+`) for **Minecraft 26.3**.
+2. For Fabric, place **[Fabric API](https://curseforge.com/minecraft/mc-mods/fabric-api)** (`0.162.0+26.3`) into your `mods` folder.
+3. Download the matching **Arcane Tablet** jar:
+   - `arcanetablet-fabric-26.3-1.0.1.jar`
+   - `arcanetablet-forge-26.3-1.0.1.jar`
+   - `arcanetablet-neoforge-26.3-1.0.1.jar`
+4. Place the jar into your `.minecraft/mods` folder.
+5. Launch the game, craft your tablet, and right-click to engage the Quantum Command Matrix!
 
 ---
 
