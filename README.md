@@ -51,6 +51,7 @@ The **Arcane Tablet** enables pure survival players to execute balanced, lore-fr
 | **Beacon Tether** | Warp to Lodestone Compass | **15 LVL** | *Country Lode, Take Me Home* (`nether/use_lodestone`) |
 | **Subspace Gateway** | Recall to Bed / Respawn Anchor | **25 LVL** | *Subspace Bubble* (`nether/fast_travel`) |
 | **Village** | Seismic scan for nearest village | **10 LVL** | *Monster Hunter* (`adventure/kill_a_mob`) |
+| **Abandoned Camp** | Pings wild frequencies for lost explorer camps | **8 LVL** | *Adventure* (`adventure/root`) |
 | **Mineshaft** | Locate subterranean timber lines | **8 LVL** | *Isn't It Iron Pick* (`story/iron_tools`) |
 | **Pillager Outpost** | Detect illager watchtowers | **10 LVL** | *Voluntary Exile* (`adventure/voluntary_exile`) |
 | **Ocean Monument** | Ping ocean guardian megaliths | **12 LVL** | *Subspace Bubble* (`nether/fast_travel`) |

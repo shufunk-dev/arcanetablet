@@ -15,6 +15,8 @@
 ### ✨ Features & Balance Updates
 - **💎 Multi-Gem Tablet Crafting:**
   - Expanded the top-middle slot recipe requirement: now crafts using either an **Amethyst Shard**, **Lapis Lazuli**, **Diamond**, or **Emerald**.
+- **🏕️ Abandoned Camp Radar Rite (26.3 Exclusive):**
+  - Added a dedicated radar scan in Navigation targeting all 18 biome variants of the new 26.3 **Abandoned Camp** structure.
 - **🔮 Amethyst Geode Radar Rite:**
   - Added subterranean acoustic radar to the Navigation category that scans chunks within an 18-chunk radius for `budding_amethyst` / `amethyst_block`.
   - Outputs live X/Y/Z coordinates and distance directly into chat and stores targets in the HUD telemetry screen.

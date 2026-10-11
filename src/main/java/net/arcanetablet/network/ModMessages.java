@@ -455,6 +455,10 @@ public class ModMessages {
                 BlockPos foundPos = locateStructure(world, StructureTags.VILLAGE, player.blockPosition());
                 return handleLocate(world, player, data, "Village", foundPos);
             }
+            case LOCATE_ABANDONED_CAMP -> {
+                BlockPos foundPos = locateStructure(world, StructureTags.ABANDONED_CAMP, player.blockPosition());
+                return handleLocate(world, player, data, "Abandoned Camp", foundPos);
+            }
             case LOCATE_ANCIENT_CITY -> {
                 BlockPos foundPos = locateStructureKey(world, BuiltinStructures.ANCIENT_CITY, player.blockPosition());
                 return handleLocate(world, player, data, "Ancient City", foundPos);
