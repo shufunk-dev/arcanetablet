@@ -76,6 +76,15 @@ public enum ArcaneAction {
             "Monster Hunter",
             "minecraft:adventure/kill_a_mob"
     ),
+    LOCATE_ABANDONED_CAMP(
+            "locate_abandoned_camp",
+            ArcaneCategory.NAVIGATION,
+            "Abandoned Camp",
+            "Pings wild terrain frequencies to locate lost explorer camps.",
+            8,
+            "Adventure",
+            "minecraft:adventure/root"
+    ),
     LOCATE_ANCIENT_CITY(
             "locate_ancient_city",
             ArcaneCategory.NAVIGATION,
@@ -320,6 +329,7 @@ public enum ArcaneAction {
             case BEACON_TETHER -> player.getInventory().contains(Items.LODESTONE.getDefaultInstance()) || player.getInventory().contains(Items.COMPASS.getDefaultInstance());
             case SUBSPACE_GATEWAY -> player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > 50000;
             case LOCATE_VILLAGE -> player.getStats().getValue(Stats.CUSTOM.get(Stats.TALKED_TO_VILLAGER)) > 0 || player.getInventory().contains(Items.EMERALD.getDefaultInstance());
+            case LOCATE_ABANDONED_CAMP -> player.getInventory().contains(Items.CAMPFIRE.getDefaultInstance()) || player.getInventory().contains(Items.TORCH.getDefaultInstance()) || player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > 5000;
             case LOCATE_ANCIENT_CITY -> player.getInventory().contains(Items.ECHO_SHARD.getDefaultInstance()) || player.getInventory().contains(Items.SCULK.getDefaultInstance()) || player.getInventory().contains(Items.AMETHYST_SHARD.getDefaultInstance());
             case LOCATE_TRIAL_CHAMBERS -> player.getInventory().contains(Items.TRIAL_KEY.getDefaultInstance()) || player.getInventory().contains(Items.COPPER_INGOT.getDefaultInstance()) || player.getInventory().contains(Items.VAULT.getDefaultInstance());
             case LOCATE_FORTRESS -> player.getInventory().contains(Items.BLAZE_POWDER.getDefaultInstance()) || player.getInventory().contains(Items.BLAZE_ROD.getDefaultInstance()) || player.getInventory().contains(Items.NETHERRACK.getDefaultInstance());
