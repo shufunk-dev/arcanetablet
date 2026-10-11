@@ -2,45 +2,45 @@ package net.arcanetablet.mixin;
 
 import net.arcanetablet.data.ArcaneWorldData;
 import net.arcanetablet.data.PlayerArcaneData;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(ServerPlayer.class)
 public abstract class ServerPlayerEntityMixin {
 
-    @Inject(method = "onDeath", at = @At("HEAD"))
+    @Inject(method = "die", at = @At("HEAD"))
     private void arcaneTablet$onPlayerDeath(DamageSource damageSource, CallbackInfo ci) {
-        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
-        if (player.getEntityWorld() instanceof ServerWorld serverWorld) {
-            ArcaneWorldData worldData = ArcaneWorldData.getServerState(serverWorld);
-            PlayerArcaneData playerData = worldData.getOrCreatePlayerData(player.getUuid());
-            playerData.setLastDeath(player.getBlockPos(), serverWorld.getRegistryKey().getValue().toString());
+        ServerPlayer player = (ServerPlayer) (Object) this;
+        if (player.level() instanceof ServerLevel serverLevel) {
+            ArcaneWorldData worldData = ArcaneWorldData.getServerState(serverLevel);
+            PlayerArcaneData playerData = worldData.getOrCreatePlayerData(player.getUUID());
+            playerData.setLastDeath(player.blockPosition(), serverLevel.dimension().identifier().toString());
 
             if (playerData.isSpiritTetherActive()) {
-                player.sendMessage(Text.literal("§d⚡ [Spirit Tether] Your inventory was preserved across the void!"), false);
+                player.sendSystemMessage(Component.literal("§d⚡ [Spirit Tether] Your inventory was preserved across the void!"));
                 playerData.clearSpiritTether();
             }
 
-            worldData.markDirty();
+            worldData.setDirty();
         }
     }
 
-    @Inject(method = "copyFrom", at = @At("TAIL"))
-    private void arcaneTablet$copyInventoryOnRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
-        ServerPlayerEntity newPlayer = (ServerPlayerEntity) (Object) this;
-        if (!alive && newPlayer.getEntityWorld() instanceof ServerWorld serverWorld) {
-            ArcaneWorldData worldData = ArcaneWorldData.getServerState(serverWorld);
-            PlayerArcaneData playerData = worldData.getOrCreatePlayerData(oldPlayer.getUuid());
+    @Inject(method = "restoreFrom", at = @At("TAIL"))
+    private void arcaneTablet$copyInventoryOnRespawn(ServerPlayer oldPlayer, boolean keepEverything, CallbackInfo ci) {
+        ServerPlayer newPlayer = (ServerPlayer) (Object) this;
+        if (!keepEverything && newPlayer.level() instanceof ServerLevel serverLevel) {
+            ArcaneWorldData worldData = ArcaneWorldData.getServerState(serverLevel);
+            PlayerArcaneData playerData = worldData.getOrCreatePlayerData(oldPlayer.getUUID());
 
-            // If player died with keepInventory-like tether, clone inventory
+            // If player died with keepInventory-like tether, restore inventory
             if (playerData.isSpiritTetherActive()) {
-                newPlayer.getInventory().clone(oldPlayer.getInventory());
+                newPlayer.getInventory().replaceWith(oldPlayer.getInventory());
             }
         }
     }

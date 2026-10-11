@@ -1,10 +1,10 @@
 package net.arcanetablet.sound;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 import net.arcanetablet.ArcaneTabletMod;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 
 public class ModSounds {
     public static final SoundEvent TABLET_OPEN = registerSound("item.arcane_tablet.open");
@@ -15,8 +15,8 @@ public class ModSounds {
     public static final SoundEvent TABLET_BANK = registerSound("item.arcane_tablet.bank");
 
     private static SoundEvent registerSound(String name) {
-        Identifier id = Identifier.of(ArcaneTabletMod.MOD_ID, name);
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
+        Identifier id = Identifier.fromNamespaceAndPath(ArcaneTabletMod.MOD_ID, name);
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
     }
 
     public static void registerModSounds() {

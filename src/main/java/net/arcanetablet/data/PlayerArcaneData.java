@@ -2,7 +2,7 @@ package net.arcanetablet.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -115,8 +115,16 @@ public class PlayerArcaneData {
         this.channelingCooldownExpiry = System.currentTimeMillis() + durationMs;
     }
 
+    public void setCooldown(long durationMs) {
+        setChannelingCooldown(durationMs);
+    }
+
     public boolean isChannelingOnCooldown() {
         return System.currentTimeMillis() < channelingCooldownExpiry;
+    }
+
+    public boolean canExecuteAction() {
+        return !isChannelingOnCooldown();
     }
 
     public long getRemainingCooldownSeconds() {

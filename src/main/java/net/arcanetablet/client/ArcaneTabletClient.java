@@ -3,14 +3,14 @@ package net.arcanetablet.client;
 import net.arcanetablet.ArcaneTabletMod;
 import net.arcanetablet.client.gui.ArcaneTabletScreen;
 import net.arcanetablet.network.ModMessages;
-import net.arcanetablet.network.RequestSyncPayload;
-import net.arcanetablet.network.SyncPlayerDataPayload;
+import net.arcanetablet.network.ModMessages.RequestSyncPayload;
+import net.arcanetablet.network.ModMessages.SyncPlayerDataPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,44 +36,52 @@ public class ArcaneTabletClient implements ClientModInitializer {
     public void onInitializeClient() {
         ArcaneTabletMod.LOGGER.info("Initializing Arcane Tablet Client!");
 
-        ClientPlayNetworking.registerGlobalReceiver(SyncPlayerDataPayload.ID, (payload, context) -> {
-            context.client().execute(() -> {
-                UNLOCKED_ACTIONS.clear();
-                UNLOCKED_ACTIONS.addAll(payload.unlockedIds());
+        ClientPlayNetworking.registerGlobalReceiver(SyncPlayerDataPayload.TYPE, (payload, context) -> {
+            receiveSyncPacket(payload);
+        });
+    }
 
-                if (payload.deathX() != 0 || payload.deathY() != 0 || payload.deathZ() != 0) {
-                    LAST_DEATH_POS = new BlockPos(payload.deathX(), payload.deathY(), payload.deathZ());
-                    LAST_DEATH_DIM = payload.deathDim();
-                }
+    public static void receiveSyncPacket(SyncPlayerDataPayload payload) {
+        handleSyncPacket(payload);
+    }
 
-                if (!payload.scannedStructure().isEmpty()) {
-                    LAST_SCAN_STRUCT = payload.scannedStructure();
-                    LAST_SCAN_POS = new BlockPos(payload.scanX(), payload.scanY(), payload.scanZ());
-                    LAST_SCAN_DIST = payload.scanDist();
-                }
+    public static void handleSyncPacket(SyncPlayerDataPayload payload) {
+        Minecraft.getInstance().execute(() -> {
+            UNLOCKED_ACTIONS.clear();
+            UNLOCKED_ACTIONS.addAll(payload.unlockedActionIds());
 
-                BANK_LEVELS = payload.bankLevels();
-                TETHER_SEC_REMAINING = payload.tetherSecRemaining();
-                COOLDOWN_SEC_REMAINING = payload.cooldownSecRemaining();
-                IS_OP = payload.isOp();
-                STATUS_MESSAGE = payload.statusMessage();
-                STATUS_CODE = payload.statusCode();
-                STATUS_TIME = System.currentTimeMillis();
+            if (payload.deathX() != 0 || payload.deathY() != 0 || payload.deathZ() != 0) {
+                LAST_DEATH_POS = new BlockPos(payload.deathX(), payload.deathY(), payload.deathZ());
+                LAST_DEATH_DIM = payload.deathDimension();
+            }
 
-                // If screen is open, refresh widgets
-                if (MinecraftClient.getInstance().currentScreen instanceof ArcaneTabletScreen screen) {
-                    screen.refreshStatus();
-                }
-            });
+            if (!payload.scannedStructure().isEmpty()) {
+                LAST_SCAN_STRUCT = payload.scannedStructure();
+                LAST_SCAN_POS = new BlockPos(payload.scanX(), payload.scanY(), payload.scanZ());
+                LAST_SCAN_DIST = payload.scanDistance();
+            }
+
+            BANK_LEVELS = payload.bankLevels();
+            TETHER_SEC_REMAINING = payload.spiritTetherRemainingSec();
+            COOLDOWN_SEC_REMAINING = payload.cooldownRemainingSec();
+            IS_OP = payload.isOp();
+            STATUS_MESSAGE = payload.statusMessage();
+            STATUS_CODE = payload.statusCode();
+            STATUS_TIME = System.currentTimeMillis();
+
+            // If screen is open, refresh widgets
+            if (Minecraft.getInstance().gui.screen() instanceof ArcaneTabletScreen screen) {
+                screen.refreshStatus();
+            }
         });
     }
 
     public static void openScreen(ItemStack stack) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         if (client.player != null) {
             // Request fresh telemetry from server
-            ClientPlayNetworking.send(new RequestSyncPayload());
-            client.setScreen(new ArcaneTabletScreen(Text.literal("Quantum Command Matrix"), stack));
+            ModMessages.sendToServer(new RequestSyncPayload());
+            client.gui.setScreen(new ArcaneTabletScreen(Component.literal("Quantum Command Matrix"), stack));
         }
     }
 }
